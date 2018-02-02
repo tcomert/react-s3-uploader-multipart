@@ -3,8 +3,8 @@
  * https://github.com/flyingsparx/NodeDirectUploader
  */
 
-var Evaporate = require('evaporate'),
-    AWS = require('aws-sdk');
+var Evaporate = require('evaporate');
+
 
 S3Upload.prototype.server = '';
 S3Upload.prototype.signingUrl = '/sign-s3';
@@ -60,99 +60,37 @@ S3Upload.prototype.handleFileSelect = function(files) {
 };
 
 S3Upload.prototype.uploadToS3 = function(file) {
-    return Evaporate.create({
-      signerUrl: this.signingUrl,
-      aws_key: this.awsKey,
-      bucket: this.awsBucket,
-      computeContentMd5: true,
-      cryptoMd5Method: (data) => { return AWS.util.crypto.md5(data, 'base64'); },
-      cryptoHexEncodedHash256: (data) => { return AWS.util.crypto.sha256(data, 'hex'); }
-    }).then((evaporate) => {
-      const addConfig = {
+    var evaporateOptions = Object.assign(this.evaporateOptions, {
+        signerUrl: this.signingUrl
+    });
+    return Evaporate.create(evaporateOptions).then(function(evaporate){
+      var addConfig = {
         name: this.s3Path + file.name,
         file: file,
-        progress: (progressValue) => {
-          return this.onProgress(progressValue, progressValue === 100 ? 'Finalizing' : 'Uploading', file);
-        },
-        complete: (_xhr, awsKey) => {
+        progress: function(progressValue, stats){
+          return this.onProgress(progressValue, progressValue === 100 ? 'Finalizing' : 'Uploading', file, stats);
+        }.bind(this),
+        complete: function(_xhr, awsKey){
           if (_xhr.status === 200) {
             this.onProgress(100, 'Upload completed', file);
-            console.log(awsKey);
-            return this.onFinishS3Put({}, file);
           } else {
             return this.onError('Upload error: ' + _xhr.status, file);
           }
-        },
-        error: (msg) => {
+        }.bind(this),
+        error: function(msg){
           return this.onError(msg, file);
-        }
+        }.bind(this)
       };
       this.evaporate = evaporate;
       evaporate.add(addConfig).then(
-        (awsKey) => {
-          return this.onFinishS3Put({}, file);
-        },
-        (errorReason) => {
+        function(awsKey){
+          return this.onFinishS3Put(awsKey, file);
+        }.bind(this),
+        function(errorReason){
           return this.onError(errorReason, file);
-        }
+        }.bind(this)
       );
-    });
-
-    // var xhr = this.createCORSRequest('PUT', signResult.signedUrl);
-    // if (!xhr) {
-    //     this.onError('CORS not supported', file);
-    // } else {
-    //     xhr.onload = function() {
-    //         if (xhr.status === 200) {
-    //             this.onProgress(100, 'Upload completed', file);
-    //             return this.onFinishS3Put(signResult, file);
-    //         } else {
-    //             return this.onError('Upload error: ' + xhr.status, file);
-    //         }
-    //     }.bind(this);
-    //     xhr.onerror = function() {
-    //         return this.onError('XHR error', file);
-    //     }.bind(this);
-    //     xhr.upload.onprogress = function(e) {
-    //         var percentLoaded;
-    //         if (e.lengthComputable) {
-    //             percentLoaded = Math.round((e.loaded / e.total) * 100);
-    //             return this.onProgress(percentLoaded, percentLoaded === 100 ? 'Finalizing' : 'Uploading', file);
-    //         }
-    //     }.bind(this);
-    // }
-    // xhr.setRequestHeader('Content-Type', file.type);
-    // if (this.contentDisposition) {
-    //     var disposition = this.contentDisposition;
-    //     if (disposition === 'auto') {
-    //         if (file.type.substr(0, 6) === 'image/') {
-    //             disposition = 'inline';
-    //         } else {
-    //             disposition = 'attachment';
-    //         }
-    //     }
-
-    //     var fileName = this.scrubFilename(file.name)
-    //     xhr.setRequestHeader('Content-Disposition', disposition + '; filename="' + fileName + '"');
-    // }
-    // if (signResult.headers) {
-    //     var signResultHeaders = signResult.headers
-    //     Object.keys(signResultHeaders).forEach(function(key) {
-    //         var val = signResultHeaders[key];
-    //         xhr.setRequestHeader(key, val);
-    //     })
-    // }
-    // if (this.uploadRequestHeaders) {
-    //     var uploadRequestHeaders = this.uploadRequestHeaders;
-    //     Object.keys(uploadRequestHeaders).forEach(function(key) {
-    //         var val = uploadRequestHeaders[key];
-    //         xhr.setRequestHeader(key, val);
-    //     });
-    // } else {
-    //     xhr.setRequestHeader('x-amz-acl', 'public-read');
-    // }
-    // this.httprequest = xhr;
-    // return xhr.send(file);
+    }.bind(this));
 };
 
 S3Upload.prototype.uploadFile = function(file) {

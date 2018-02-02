@@ -1,6 +1,6 @@
 {
   "name": "react-s3-uploader",
-  "version": "4.6.2",
+  "version": "4.7",
   "description": "React component that renders a file input and automatically uploads to an S3 bucket",
   "main": "index.js",
   "scripts": {
@@ -8,21 +8,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:odysseyscience/react-s3-uploader.git"
+    "url": "git@github.com:kpantic/react-s3-uploader-multipart.git"
   },
   "keywords": [
     "react",
     "upload",
     "component",
     "s3",
-    "bucket"
+    "bucket",
+    "multipart"
   ],
-  "author": "Sean Adkinson",
+  "author": "Kristoffer Pantic",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/odysseyscience/react-s3-uploader/issues"
+    "url": "https://github.com/kpantic/react-s3-uploader-multipart/issues"
   },
-  "homepage": "https://github.com/odysseyscience/react-s3-uploader",
+  "homepage": "https://github.com/kpantic/react-s3-uploader-multipart",
   "dependencies": {
     "aws-sdk": "2.x",
     "create-react-class": "^15.5.2",

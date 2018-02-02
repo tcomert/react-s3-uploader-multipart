@@ -1,18 +1,20 @@
 react-s3-uploader
 ===========================
 
+This is a fork of [react-s3-uploader](https://github.com/odysseyscience/react-s3-uploader) that support using multipart uploading with [EvaporateJS](https://github.com/TTLabs/EvaporateJS).
+
 Provides a `React` component that automatically uploads to an S3 Bucket.
 
 Install
 -----------
 ```bash
-$ npm install --save react-s3-uploader
+$ npm install --save react-s3-uploader-multipart
 ```
 From Browser
 ------------
 
 ```jsx
-var ReactS3Uploader = require('react-s3-uploader');
+var ReactS3Uploader = require('react-s3-uploader-multipart');
 
 ...
 
