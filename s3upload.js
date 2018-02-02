@@ -61,14 +61,15 @@ S3Upload.prototype.handleFileSelect = function(files) {
 
 S3Upload.prototype.uploadToS3 = function(file) {
     return Evaporate.create({
-      signerUrl: this.signinggUrl,
+      signerUrl: this.signingUrl,
       aws_key: this.awsKey,
       bucket: this.awsBucket,
+      computeContentMd5: true,
       cryptoMd5Method: (data) => { return AWS.util.crypto.md5(data, 'base64'); },
       cryptoHexEncodedHash256: (data) => { return AWS.util.crypto.sha256(data, 'hex'); }
     }).then((evaporate) => {
       const addConfig = {
-        name: file.name,
+        name: this.s3Path + file.name,
         file: file,
         progress: (progressValue) => {
           return this.onProgress(progressValue, progressValue === 100 ? 'Finalizing' : 'Uploading', file);
@@ -155,10 +156,7 @@ S3Upload.prototype.uploadToS3 = function(file) {
 };
 
 S3Upload.prototype.uploadFile = function(file) {
-    var uploadToS3Callback = this.uploadToS3.bind(this, file);
-
-    if(this.getSignedUrl) return this.getSignedUrl(file, uploadToS3Callback);
-    return this.executeOnSignedUrl(file, uploadToS3Callback);
+    return this.uploadToS3(file);
 };
 
 S3Upload.prototype.abortUpload = function(filename) {
