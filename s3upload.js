@@ -98,7 +98,13 @@ S3Upload.prototype.uploadFile = function(file) {
 };
 
 S3Upload.prototype.abortUpload = function(filename) {
-    return this.evaporate && this.evaporate.cancel(this.awsBucket + '/' + filename);
+  if (filename !== undefined){
+    return this.evaporate && this.evaporate.cancel(
+      this.evaporateOptions.bucket + '/' + this.s3Path + filename
+    );
+  }else{
+    return this.evaporate && this.evaporate.cancel();
+  }
 };
 
 module.exports = S3Upload;
