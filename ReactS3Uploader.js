@@ -33,7 +33,7 @@ var ReactS3Uploader = createReactClass({
         s3path: PropTypes.string,
         inputRef: PropTypes.func,
         autoUpload: PropTypes.bool,
-        evaporatorOptions: PropTypes.object,
+        evaporateOptions: PropTypes.object.required,
     },
 
     getDefaultProps: function() {
@@ -63,6 +63,7 @@ var ReactS3Uploader = createReactClass({
 
     uploadFile: function() {
         this.myUploader = new S3Upload({
+            evaporateOptions: this.props.evaporateOptions,
             fileElement: ReactDOM.findDOMNode(this),
             signingUrl: this.props.signingUrl,
             getSignedUrl: this.props.getSignedUrl,
