@@ -18,7 +18,7 @@ var ReactS3Uploader = require('react-s3-uploader-multipart');
 ...
 
 <ReactS3Uploader
-    evaporateOptions={{
+    evaporatorOptions={{
        aws_key: AWS_KEY,
        bucket: AWS_BUCKET
     }}
@@ -47,7 +47,7 @@ The above example shows all supported `props`.
 This expects a request to `/s3/sign` to return JSON with a `signedUrl` property that can be used
 to PUT the file in S3.
 
-`evaporateOptions` is required and is forwarded to a call to EvaporateJS.create() as documented [here](https://github.com/TTLabs/EvaporateJS/wiki/Evaporate.create()). Our library injects the `signingUrl` config in this object, aside from that all required fields from their documentation are required here.
+`evaporatorOptions` is required and is forwarded to a call to EvaporateJS.create() as documented [here](https://github.com/TTLabs/EvaporateJS/wiki/Evaporate.create()). Our library injects the `signingUrl` config in this object, aside from that all required fields from their documentation are required here.
 
 `contentDisposition` is optional and can be one of `inline`, `attachment` or `auto`. If given,
 the `Content-Disposition` header will be set accordingly with the file's original filename.
