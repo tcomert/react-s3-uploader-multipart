@@ -65,7 +65,7 @@ S3Upload.prototype.uploadToS3 = function(file) {
     });
     return Evaporate.create(evaporateOptions).then(function(evaporate){
       var addConfig = {
-        name: this.s3Path + file.name,
+        name: this.s3path + file.name,
         file: file,
         progress: function(progressValue, stats){
           return this.onProgress(progressValue, progressValue === 100 ? 'Finalizing' : 'Uploading', file, stats);
@@ -100,7 +100,7 @@ S3Upload.prototype.uploadFile = function(file) {
 S3Upload.prototype.abortUpload = function(filename) {
   if (filename !== undefined){
     return this.evaporate && this.evaporate.cancel(
-      this.evaporateOptions.bucket + '/' + this.s3Path + filename
+      this.evaporateOptions.bucket + '/' + this.s3path + filename
     );
   }else{
     return this.evaporate && this.evaporate.cancel();
