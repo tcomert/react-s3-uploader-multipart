@@ -22,8 +22,8 @@ S3Upload.prototype.preprocess = function(file, next) {
     return next(file);
 };
 
-S3Upload.prototype.onProgress = function(percent, status, file) {
-    return console.log('base.onProgress()', percent, status);
+S3Upload.prototype.onProgress = function(percent, stats) {
+    return console.log('base.onProgress()', percent, stats);
 };
 
 S3Upload.prototype.onError = function(status, file) {
@@ -52,7 +52,7 @@ S3Upload.prototype.handleFileSelect = function(files) {
     for (var i=0; i < files.length; i++) {
         var file = files[i];
         this.preprocess(file, function(processedFile){
-          this.onProgress(0, 'Waiting', processedFile);
+          this.onProgress(0);
           result.push(this.uploadFile(processedFile));
           return result;
         }.bind(this));
@@ -67,12 +67,12 @@ S3Upload.prototype.uploadToS3 = function(file) {
       var addConfig = {
         name: this.s3path + file.name,
         file: file,
-        progress: function(progressValue, stats){
-          return this.onProgress(progressValue, progressValue === 100 ? 'Finalizing' : 'Uploading', file, stats);
+        progress: function(p, stats){
+          return this.onProgress(p, stats);
         }.bind(this),
         complete: function(_xhr, awsKey){
           if (_xhr.status === 200) {
-            this.onProgress(100, 'Upload completed', file);
+            this.onProgress(1);
           } else {
             return this.onError('Upload error: ' + _xhr.status, file);
           }
