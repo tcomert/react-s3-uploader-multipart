@@ -67,6 +67,7 @@ S3Upload.prototype.uploadToS3 = function(file) {
       var addConfig = {
         name: this.s3path + file.name,
         file: file,
+        contentType: file.type,
         progress: function(p, stats){
           return this.onProgress(p, stats);
         }.bind(this),
